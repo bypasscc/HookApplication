@@ -27,23 +27,27 @@ public class WelcomeActivity  extends XhookBaseActivity
 
         setContentView(R.layout.activity_welcome);
 
-        mAdapter = new WelcomeAdapter(this);
+ //        mAdapter = new WelcomeAdapter(this);
         // TODO add proper description texts and load them from resources, add icons, make it more fancy, ...
-        mAdapter.add(new WelcomeItem(R.string.tabInstall, R.string.tabInstallDescription));
-        mAdapter.add(new WelcomeItem(R.string.tabAbout, R.string.tabAboutDescription));
+ //       mAdapter.add(new WelcomeItem(R.string.tabInstall, R.string.tabInstallDescription));
+//        mAdapter.add(new WelcomeItem(R.string.tabAbout, R.string.tabAboutDescription));
 
-        ListView lv = (ListView) findViewById(R.id.welcome_list);
-        lv.setAdapter(mAdapter);
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(WelcomeActivity.this, XHookInstallerActivity.class);
-                intent.putExtra(XHookInstallerActivity.EXTRA_SECTION, position);
-                intent.putExtra(NavUtil.FINISH_ON_UP_NAVIGATION, true);
-                startActivity(intent);
-                NavUtil.setTransitionSlideEnter(WelcomeActivity.this);
-            }
-        });
+//        ListView lv = (ListView) findViewById(R.id.welcome_list);
+//        lv.setAdapter(mAdapter);
+//        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                Intent intent = new Intent(WelcomeActivity.this, XHookInstallerActivity.class);
+//                intent.putExtra(XHookInstallerActivity.EXTRA_SECTION, position);
+//                intent.putExtra(NavUtil.FINISH_ON_UP_NAVIGATION, true);
+//                startActivity(intent);
+//                NavUtil.setTransitionSlideEnter(WelcomeActivity.this);
+//            }
+//        });
+        Intent intent = new Intent(WelcomeActivity.this, XHookInstallerActivity.class);
+        intent.putExtra(XHookInstallerActivity.EXTRA_SECTION, 0);
+        intent.putExtra(NavUtil.FINISH_ON_UP_NAVIGATION, true);
+        startActivity(intent);
 
     }
 

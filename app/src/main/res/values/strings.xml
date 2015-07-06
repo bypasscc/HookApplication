@@ -13,7 +13,7 @@
 
     <!-- Welcome screen / main sections -->
     <string name="welcome"></string>
-    <string name="tabInstall">安装XHook</string>
+    <string name="tabInstall">按键精灵过检测</string>
     <string name="tabInstallDescription">点击此处进入安装XHook</string>
     <string name="tabModules">模块</string>
     <string name="tabModulesDescription">框架本身不增加任何功能。您需要使用模块。安装模块后在此处激活它们。</string>
@@ -29,7 +29,7 @@
     <string name="tabAboutDescription">了解 Xhook 作者、获取帮助支持的方法等信息。</string>
 
     <!-- Installer tab -->
-    <string name="install">安装</string>
+    <string name="install">过检测</string>
     <string name="uninstall">卸载</string>
     <string name="installedVersion">激活</string>
     <string name="latestVersion">程序自带</string>
