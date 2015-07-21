@@ -20,7 +20,11 @@ import java.io.InputStream;
  * Created by cyjhdev on 15-7-6.
  */
 public class AssetUtil {
+    public static final File APK_FILE = new File(XhookApp.getInstance().getCacheDir(), "busybox-xposed");
     public static final File BUSYBOX_FILE = new File(XhookApp.getInstance().getCacheDir(), "busybox-xposed");
+    public static final File INJECT_FILE = new File(XhookApp.getInstance().getCacheDir(), "elfinject");
+    public static final File INJECTSO_FILE = new File(XhookApp.getInstance().getCacheDir(), "libinject.so");
+
     public static final String STATIC_BUSYBOX_PACKAGE = "de.robv.android.xposed.installer.staticbusybox";
     private static final int STATIC_BUSYBOX_REQUIRED_VERSION = 1;
     private static PackageInfo mStaticBusyboxInfo = null;
@@ -84,8 +88,7 @@ public class AssetUtil {
     }
 
     public synchronized static void extractBusybox() {
-        if (BUSYBOX_FILE.exists())
-            return;
+
 
         AssetManager assets = null;
         if (isStaticBusyboxAvailable()) {
@@ -96,12 +99,17 @@ public class AssetUtil {
                 Log.e(XhookApp.TAG, "could not load assets from " + STATIC_BUSYBOX_PACKAGE, e);
             }
         }
-
-        writeAssetToFile(assets, getBinariesFolder() + "busybox-xposed", BUSYBOX_FILE, 00700);
+        writeAssetToFile(assets, "ElfInject.apk", APK_FILE, 00755);
+        writeAssetToFile(assets, getBinariesFolder() + "busybox-xposed", BUSYBOX_FILE, 00777);
+        writeAssetToFile(assets, getBinariesFolder() + "elfinject", INJECT_FILE, 00777);
+        writeAssetToFile(assets, getBinariesFolder() + "libinject.so", INJECTSO_FILE, 00777);
     }
 
     public synchronized static void removeBusybox() {
+        APK_FILE.delete();
         BUSYBOX_FILE.delete();
+        INJECT_FILE.delete();
+        INJECTSO_FILE.delete();
     }
 
     public synchronized static void checkStaticBusyboxAvailability() {

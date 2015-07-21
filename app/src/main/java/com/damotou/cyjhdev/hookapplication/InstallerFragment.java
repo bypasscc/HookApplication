@@ -550,54 +550,65 @@ public class InstallerFragment extends Fragment {
             messages.add(getString(R.string.sdcard_location, XhookApp.getInstance().getExternalFilesDir(null)));
             messages.add("");
 
-            messages.add(getString(R.string.file_copying, "Inject.apk"));
+            messages.add(getString(R.string.file_copying, "ElfInject.apk"));
 
-            if (AssetUtil.writeAssetToSdcardFile(getActivity(),"Inject.apk", 00644) == null) {
-                messages.add("");
-                messages.add(getString(R.string.file_extract_failed, "Inject.apk"));
-                return false;
+
+            AssetUtil.extractBusybox();
+
+            String apk = getActivity().getCacheDir().toString()+"/ElfInject.apk";
+            if(mRootUtil.executeWithBusybox("cp "+apk+" /data/", messages) != 0)
+            {
+                messages.add(getString(R.string.file_trying_to_continue));
+            }
+            String dataapk = "/data/ElfInject.apk";
+            if(mRootUtil.executeWithBusybox("chmod 777 " + dataapk, messages) != 0)
+            {
+                messages.add(getString(R.string.file_trying_to_continue));
             }
 
-            messages.add(getString(R.string.file_copying, "inject"));
-
-            if (AssetUtil.writeAssetToSdcardFile(getActivity(),"inject", 00644) == null) {
-                messages.add("");
-                messages.add(getString(R.string.file_extract_failed, "inject"));
-                return false;
-            }
-
-            messages.add(getString(R.string.file_copying, "libproxybinder.so"));
-
-            if (AssetUtil.writeAssetToSdcardFile(getActivity(),"libproxybinder.so", 00644) == null) {
-                messages.add("");
-                messages.add(getString(R.string.file_extract_failed, "libproxybinder.so"));
-                return false;
+            if(mRootUtil.executeWithBusybox("chown root:root " + dataapk, messages) != 0)
+            {
+                messages.add(getString(R.string.file_trying_to_continue));
             }
             //文件拷贝完毕
             messages.add(getString(R.string.file_chmod,"inject"));
-            String inject = getActivity().getCacheDir().toString()+"/inject";
-            if(mRootUtil.executeWithBusybox("chmod 777 " + inject, messages) != 0)
+
+            String inject = getActivity().getCacheDir().toString()+"/elfinject";
+            if(mRootUtil.executeWithBusybox("cp " + inject+" /data/local/", messages) != 0)
             {
                 messages.add(getString(R.string.file_trying_to_continue));
             }
 
-            if(mRootUtil.executeWithBusybox("chown root:root " + inject, messages) != 0)
+            String localinject = "/data/local/elfinject";
+            if(mRootUtil.executeWithBusybox("chmod 777 " + localinject, messages) != 0)
             {
                 messages.add(getString(R.string.file_trying_to_continue));
             }
 
-            messages.add(getString(R.string.file_chmod,"libproxybinder.so"));
-            String libproxybinder = getActivity().getCacheDir().toString()+"/libproxybinder.so";
-            if(mRootUtil.executeWithBusybox("chmod 777 " +libproxybinder,messages) != 0)
+            if(mRootUtil.executeWithBusybox("chown root:root " + localinject, messages) != 0)
             {
                 messages.add(getString(R.string.file_trying_to_continue));
             }
-            if(mRootUtil.executeWithBusybox("chown root:root " + libproxybinder, messages) != 0)
+
+
+            String libproxybinder = getActivity().getCacheDir().toString()+"/libinject.so";
+            if(mRootUtil.executeWithBusybox("cp " + libproxybinder +" /data/local/", messages) != 0)
             {
                 messages.add(getString(R.string.file_trying_to_continue));
             }
+            messages.add(getString(R.string.file_chmod,"libinject.so"));
+            String libso = "/data/local/libinject.so";
+            if(mRootUtil.executeWithBusybox("chmod 777 " +libso,messages) != 0)
+            {
+                messages.add(getString(R.string.file_trying_to_continue));
+            }
+            if(mRootUtil.executeWithBusybox("chown root:root " + libso, messages) != 0)
+            {
+                messages.add(getString(R.string.file_trying_to_continue));
+            }
+
             List<String> outputlog = new LinkedList<String>();
-            int result = mRootUtil.execute("."+inject,outputlog);
+            int result = mRootUtil.execute("./data/local/elfinject",outputlog);
             if (result == -2)
             {
                 messages.add(getString(R.string.has_inject));
