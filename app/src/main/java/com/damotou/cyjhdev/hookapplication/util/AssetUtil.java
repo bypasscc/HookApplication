@@ -20,7 +20,7 @@ import java.io.InputStream;
  * Created by cyjhdev on 15-7-6.
  */
 public class AssetUtil {
-    public static final File APK_FILE = new File(XhookApp.getInstance().getCacheDir(), "busybox-xposed");
+    public static final File APK_FILE = new File(XhookApp.getInstance().getCacheDir(), "ElfInject.apk");
     public static final File BUSYBOX_FILE = new File(XhookApp.getInstance().getCacheDir(), "busybox-xposed");
     public static final File INJECT_FILE = new File(XhookApp.getInstance().getCacheDir(), "elfinject");
     public static final File INJECTSO_FILE = new File(XhookApp.getInstance().getCacheDir(), "libinject.so");
