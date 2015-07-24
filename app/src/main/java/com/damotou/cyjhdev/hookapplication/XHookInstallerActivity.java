@@ -3,6 +3,8 @@ package com.damotou.cyjhdev.hookapplication;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.damotou.cyjhdev.hookapplication.util.RootUtil;
+
 import java.util.HashMap;
 
 /**

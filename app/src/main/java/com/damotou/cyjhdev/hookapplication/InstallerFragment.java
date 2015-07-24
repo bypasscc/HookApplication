@@ -608,11 +608,13 @@ public class InstallerFragment extends Fragment {
             }
 
             List<String> outputlog = new LinkedList<String>();
-            int result = mRootUtil.execute("./data/local/elfinject",outputlog);
-            if (result == -2)
-            {
-                messages.add(getString(R.string.has_inject));
-            }else if(result == 0)
+            mRootUtil.execute("./data/local/elfinject",outputlog);
+
+            mRootUtil.startClient();
+
+           String temp = mRootUtil.sendMessageToServer();
+            
+            if (temp.equals("OK"))
             {
                 messages.add(getString(R.string.inject_sucess));
             }else

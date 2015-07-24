@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.net.LocalServerSocket;
 import android.net.LocalSocket;
 import com.damotou.cyjhdev.hookapplication.util.NavUtil;
+import com.damotou.cyjhdev.hookapplication.util.RootUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,7 +28,8 @@ public class WelcomeActivity  extends XhookBaseActivity
     /* 数据段begin */
     private final String TAG = "server";
 
-    private ServerSocketThread mServerSocketThread;
+
+
     /* 数据段end */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +38,6 @@ public class WelcomeActivity  extends XhookBaseActivity
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
         setContentView(R.layout.activity_welcome);
-
-        mServerSocketThread = new ServerSocketThread();
-        mServerSocketThread.start();
 
         Intent intent = new Intent(WelcomeActivity.this, XHookInstallerActivity.class);
         intent.putExtra(XHookInstallerActivity.EXTRA_SECTION, 0);
@@ -106,124 +105,5 @@ public class WelcomeActivity  extends XhookBaseActivity
             return title;
         }
     }
-    /* 内部类begin */
-    private class ServerSocketThread extends Thread
-    {
-        private boolean keepRunning = true;
-        private LocalServerSocket serverSocket;
 
-        private void stopRun()
-        {
-            keepRunning = false;
-        }
-
-        @Override
-        public void run()
-        {
-            try
-            {
-                serverSocket = new LocalServerSocket("elf_local_socket");
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-
-                keepRunning = false;
-            }
-
-            while(keepRunning)
-            {
-                Log.d(TAG, "wait for new client coming !");
-
-                try
-                {
-                    LocalSocket interactClientSocket = serverSocket.accept();
-
-                    //由于accept()在阻塞时，可能Activity已经finish掉了，所以再次检查keepRunning
-                    if (keepRunning)
-                    {
-                        Log.d(TAG, "new client coming !");
-
-                        new InteractClientSocketThread(interactClientSocket).start();
-                    }
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-
-                    keepRunning = false;
-                }
-            }
-
-            if (serverSocket != null)
-            {
-                try
-                {
-                    serverSocket.close();
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    private class InteractClientSocketThread extends Thread
-    {
-        private LocalSocket interactClientSocket;
-
-        public InteractClientSocketThread(LocalSocket interactClientSocket)
-        {
-            this.interactClientSocket = interactClientSocket;
-        }
-
-        @Override
-        public void run()
-        {
-            StringBuilder recvStrBuilder = new StringBuilder();
-            InputStream inputStream = null;
-            try
-            {
-                inputStream = interactClientSocket.getInputStream();
-                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                char[] buf = new char[4096];
-                int readBytes = -1;
-                while ((readBytes = inputStreamReader.read(buf)) != -1)
-                {
-                    String tempStr = new String(buf, 0, readBytes);
-                    recvStrBuilder.append(tempStr);
-                    String recvString = recvStrBuilder.toString();
-                    if(recvString.contains("NULL"))
-                    {
-                        Log.d(TAG,"FAILED");
-                    }else if(recvString.contains("SUCCESS"))
-                    {
-                        Log.d(TAG,"SUCCESS");
-                    }
-                    Log.d(TAG,recvStrBuilder.toString());
-                }
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-
-                Log.d(TAG, "resolve data error !");
-            }
-            finally
-            {
-                if (inputStream != null)
-                {
-                    try
-                    {
-                        inputStream.close();
-                    }
-                    catch (IOException e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-    }
 }
