@@ -556,11 +556,12 @@ public class InstallerFragment extends Fragment {
             AssetUtil.extractBusybox();
 
             String apk = getActivity().getCacheDir().toString()+"/ElfInject.apk";
-            if(mRootUtil.executeWithBusybox("cp "+apk+" /data/", messages) != 0)
+            if(mRootUtil.executeWithBusybox("cp " + apk + " /data/", messages) != 0)
             {
                 messages.add(getString(R.string.file_trying_to_continue));
             }
             String dataapk = "/data/ElfInject.apk";
+
             if(mRootUtil.executeWithBusybox("chmod 777 " + dataapk, messages) != 0)
             {
                 messages.add(getString(R.string.file_trying_to_continue));
@@ -574,7 +575,7 @@ public class InstallerFragment extends Fragment {
             messages.add(getString(R.string.file_chmod,"inject"));
 
             String inject = getActivity().getCacheDir().toString()+"/elfinject";
-            if(mRootUtil.executeWithBusybox("cp " + inject+" /data/local/", messages) != 0)
+            if(mRootUtil.executeWithBusybox("cp " + inject + " /data/local/", messages) != 0)
             {
                 messages.add(getString(R.string.file_trying_to_continue));
             }
@@ -592,13 +593,15 @@ public class InstallerFragment extends Fragment {
 
 
             String libproxybinder = getActivity().getCacheDir().toString()+"/libinject.so";
-            if(mRootUtil.executeWithBusybox("cp " + libproxybinder +" /data/local/", messages) != 0)
+            if(mRootUtil.executeWithBusybox("cp " + libproxybinder + " /data/local/", messages) != 0)
             {
                 messages.add(getString(R.string.file_trying_to_continue));
             }
             messages.add(getString(R.string.file_chmod,"libinject.so"));
+
             String libso = "/data/local/libinject.so";
-            if(mRootUtil.executeWithBusybox("chmod 777 " +libso,messages) != 0)
+
+            if(mRootUtil.executeWithBusybox("chmod 644 " + libso, messages) != 0)
             {
                 messages.add(getString(R.string.file_trying_to_continue));
             }
@@ -607,16 +610,23 @@ public class InstallerFragment extends Fragment {
                 messages.add(getString(R.string.file_trying_to_continue));
             }
 
+
             List<String> outputlog = new LinkedList<String>();
+            mRootUtil.execute("getenforce", outputlog);
+
+            if (outputlog.get(0).equals("Enforcing")) //开启了selinux
+            {
+                mRootUtil.execute("setenforce 0", outputlog);
+            }
+            outputlog.clear();
             mRootUtil.execute("./data/local/elfinject",outputlog);
 
-            mRootUtil.startClient();
-
-           String temp = mRootUtil.sendMessageToServer();
-            
-            if (temp.equals("OK"))
+            if (outputlog.size() == 2 && outputlog.get(1).contains("SUCCESS"))
             {
                 messages.add(getString(R.string.inject_sucess));
+            }else if (outputlog.size() == 1 && outputlog.get(0).contains("EXIST"))
+            {
+                messages.add(getString(R.string.inject_exist));
             }else
             {
                 messages.add(getString(R.string.inject_failed));

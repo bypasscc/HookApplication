@@ -200,4 +200,5 @@
     <string name="inject_failed">Hook安装失败！</string>
     <string name="has_inject">手机目前已经处于HOOKED状态!</string>
     <string name="inject_sucess">Hook安装成功!</string>
+    <string name="inject_exist">系统已经HOOK过了！</string>
 </resources>

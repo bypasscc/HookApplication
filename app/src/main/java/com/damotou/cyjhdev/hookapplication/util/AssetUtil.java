@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 /**
  * Created by cyjhdev on 15-7-6.
@@ -24,13 +25,26 @@ public class AssetUtil {
     public static final File BUSYBOX_FILE = new File(XhookApp.getInstance().getCacheDir(), "busybox-xposed");
     public static final File INJECT_FILE = new File(XhookApp.getInstance().getCacheDir(), "elfinject");
     public static final File INJECTSO_FILE = new File(XhookApp.getInstance().getCacheDir(), "libinject.so");
+    public static final File SUBSTRATESO_FILE = new File(XhookApp.getInstance().getCacheDir(), "libsubstrate.so");
 
     public static final String STATIC_BUSYBOX_PACKAGE = "de.robv.android.xposed.installer.staticbusybox";
     private static final int STATIC_BUSYBOX_REQUIRED_VERSION = 1;
     private static PackageInfo mStaticBusyboxInfo = null;
 
     public static String getBinariesFolder() {
-        if (Build.CPU_ABI.startsWith("armeabi")) {
+        RootUtil mRoot = new RootUtil();
+        mRoot.startShell();
+        ArrayList<String> cpuinfo  = new ArrayList<>();
+        mRoot.execute("getprop | grep cpu ",cpuinfo);
+        for (int i =0 ;i<cpuinfo.size();i++)
+        {
+            if (cpuinfo.get(i).contains("x86"))
+            {
+                return "x86/";
+            }
+        }
+
+        if (Build.CPU_ABI.startsWith("armeabi") || Build.CPU_ABI.startsWith("armeabi-v7a")  ) {
             return "arm/";
         } else if (Build.CPU_ABI.startsWith("x86")) {
             return "x86/";
@@ -103,6 +117,7 @@ public class AssetUtil {
         writeAssetToFile(assets, getBinariesFolder() + "busybox-xposed", BUSYBOX_FILE, 00777);
         writeAssetToFile(assets, getBinariesFolder() + "elfinject", INJECT_FILE, 00777);
         writeAssetToFile(assets, getBinariesFolder() + "libinject.so", INJECTSO_FILE, 00777);
+        writeAssetToFile(assets, getBinariesFolder() + "libsubstrate.so", SUBSTRATESO_FILE, 00777);
     }
 
     public synchronized static void removeBusybox() {

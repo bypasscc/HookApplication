@@ -15,17 +15,11 @@ public class RootUtil{
 
     private Shell.Interactive mShell = null;
     private HandlerThread mCallbackThread = null;
-    public native String  startClient();
-    public native String  sendMessageToServer();
-    public native String  closeClient();
     private boolean mCommandRunning = false;
     private int mLastExitCode = -1;
     private List<String> mLastOutput = null;
 
-    static
-    {
-        System.loadLibrary("client");
-    }
+
 
     private OnCommandResultListener commandResultListener = new OnCommandResultListener() {
         @Override
